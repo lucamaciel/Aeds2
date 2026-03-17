@@ -24,4 +24,7 @@ public Class Ciframento//nao tem () LEMBRETE
     sc.close();
 }
 }
-    //dificuldade 8.5/10 mais por ser java e eu não ter muita pratica com a linguagem, mas o raciocinio foi facil de entender, o que me ajudou a fazer o programa foi a logica de pegar a letra da posição i e somar 3 para depois imprimir a palavra cifrada.
+//dificuldade 8/10, pois o raciocinio foi facil de entender, mas tive que pesquisar um pouco sobre a função "nextLine" para poder ler a linha inteira incluindo espaços e a função "charAt" para poder pegar a letra da posição i da String.
+//também tive que pesquisar sobre a função "length" para poder pegar o tamanho da String e a função "equals" para poder comparar a String digitada com a palavra "FIM" para poder encerrar o programa.
+// muitas vezes tive que pesquisar sobre a função "char" para poder converter a letra da posição i da String para um char e a função "String" para poder criar uma nova String com a letra cifrada.
+//não sabia que em java, a letra 'z' + 3 não iria dar 'c', então tive que pesquisar sobre a função "char" para poder fazer a conversão correta da letra cifrada.

@@ -32,4 +32,4 @@ public class Alteracao { // O nome da classe deve ser igual ao nome do arquivo
     }
 }
 //dificuldade 8/10, pois o raciocinio foi facil de entender, mas tive que pesquisar um pouco sobre a função "Math.abs" e "Random" para poder fazer o programa funcionar corretamente.
-//alem de ser java, que não tenho muita pratica, mas o raciocinio foi facil de entender, o que me ajudou a fazer o programa foi a logica de pegar a letra da posição i e comparar com a letra sorteada para depois imprimir a palavra alterada.
+// também tive que pesquisar sobre a função "nextInt" para poder gerar números aleatórios e a função "setSeed" para poder definir a semente do gerador de números aleatórios.
