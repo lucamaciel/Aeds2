@@ -57,11 +57,20 @@ a)
 
 
 
-b) 
-
+b) passos 01 - Para encontrar a fórmula fechada, podemos simplificar a expressão dentro do somatório:
+    Para isso podemos reescrever a expressão que antes era 3 + 2(n-i) + 1 
+    como 2n - 26, pois o termo -2i se cancela com o termo +2i, resultando em:
+    F(n) = ∑(i=15 ate n-1) [2n - 26]
+         = (n - 15) * (2n - 26)   // multiplicando o número de termos pelo valor de cada termo
+         = 2n^2 - 56n + 390       // expandindo a expressão
+    Passo 02 - Agora, para determinar a ordem de complexidade usando a notação O-grande,
+     focamos no termo de maior grau na fórmula fechada, que é 2n^2. Portanto, a ordem de complexidade é O(n^2).
     
-
-
+     Passos resumidos:
+     1. Simplificar a expressão dentro do somatório.
+        2. Multiplicar o número de termos pelo valor de cada termo para obter a fórmula fechada.
+        3. Identificar o termo de maior grau na fórmula fechada para determinar a ordem de complexidade.
+        RESPOSTA B) F(n) = 2n^2 - 56n + 390, O(n^2)
 
 
 */
