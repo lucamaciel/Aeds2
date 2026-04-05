@@ -2,6 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Bubble",
+      "request": "launch",
+      "mainClass": "Estudo.ProvaPratica01.Bubble",
+      "projectName": "Aeds2_6a9fca4f"
+    },
+    {
+      "type": "java",
+      "name": "bubble",
+      "request": "launch",
+      "mainClass": "Estudo.ProvaPratica01.bubble",
+      "projectName": "Aeds2_6a9fca4f"
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
