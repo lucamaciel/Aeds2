@@ -53,3 +53,11 @@ int main() {
 
     return 0;
 }
+/*
+(b) Complexidade
+O Selection Sort normal faz n iterações no loop externo. Nessa versão modificada faz n/2 iterações porque a cada passagem resolve duas posições ao mesmo tempo.
+Mas dentro de cada iteração ainda percorre a porção inteira para achar min e max → continua O(n).
+Então: n/2 × O(n) = O(n²) — mesma classe assintótica, mas na prática o número de comparações cai pela metade em relação ao Selection Sort normal.
+O professor anotou "comparações" na prova, então a resposta esperada é: a complexidade continua O(n²), porém o número de comparações é reduzido aproximadamente à metade.
+
+*/
