@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public Class Ciframento//nao tem () LEMBRETE
+public class Ciframento//nao tem () LEMBRETE
 {
     public static void main(string args[]){
         
