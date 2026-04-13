@@ -1,9 +1,37 @@
-#include <string.h>
 #include <stdio.h>
 //vou fazer com bubble sort pois dessa forma coloco as duas strings em ordem alfabetica e comparo as duas
 
+int meu_strlen(char str[]) {
+    int n = 0;
+    while (str[n] != '\0') {
+        n++;
+    }
+    return n;
+}
+
+int meu_strcmp(char str1[], char str2[]) {
+    int i = 0;
+    while (str1[i] != '\0' && str2[i] != '\0') {
+        if (str1[i] != str2[i]) {
+            return str1[i] - str2[i];
+        }
+        i++;
+    }
+    return str1[i] - str2[i];
+}
+
+void remover_quebra_linha(char str[]) {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == '\n') {
+            str[i] = '\0';
+        }
+        i++;
+    }
+}
+
 void ordenar(char str[]) {
-    int n = strlen(str);
+    int n = meu_strlen(str);
     for (int i = 0; i < n - 1; i++) //os contadores servem so para incrementar e fazer as comparações
 	{
         for (int j = i + 1; j < n; j++) 
@@ -32,16 +60,16 @@ int main()
 		// nesse caso como o fgets ta dentro do while não vou precisar por outro ao final dele.
 
 		
-		linha[strcspn(linha, "\n")] = '\0';//consumir os \0 da entrada
-        if (strcmp(linha, "FIM") == 0)
+		remover_quebra_linha(linha);//consumir os \0 da entrada
+        if (meu_strcmp(linha, "FIM") == 0)
 		 {
 			 return 0;
 		 }
 		
 		sscanf(linha, "%s - %s", str1, str2); 
 		
-		int n1 = strlen(str1);
-	    int n2 = strlen(str2);
+		int n1 = meu_strlen(str1);
+	    int n2 = meu_strlen(str2);
 		
 		/*O Nome: sscanf (String Scan Formatted)
 O primeiro s vem de string. Isso diz ao C: "Não espere o usuário digitar nada; olhe para a variável linha que eu já preenchi antes com o fgets*/
@@ -53,7 +81,7 @@ O primeiro s vem de string. Isso diz ao C: "Não espere o usuário digitar nada;
 			ordenar(str1);
 			ordenar(str2);
 
-			if(strcmp(str1, str2) == 0)// quando ha uma diferenca entre as duas strings o strcmp da sempre 
+			if(meu_strcmp(str1, str2) == 0)// quando ha uma diferenca entre as duas strings o strcmp da sempre 
 				//diferente de zero IMPORTANTE.
 			{ 
 				printf("SIM\n");

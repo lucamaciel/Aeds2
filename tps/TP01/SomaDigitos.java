@@ -20,6 +20,25 @@ public class SomaDigitos {
                 s.charAt(2) == 'M');
     }
 
+    public static int converterParaInteiro(String s) {
+        int numero = 0;
+        int inicio = 0;
+
+        if (s.length() > 0 && s.charAt(0) == '-') {
+            inicio = 1;
+        }
+
+        for (int i = inicio; i < s.length(); i++) {
+            numero = (numero * 10) + (s.charAt(i) - '0');
+        }
+
+        if (inicio == 1) {
+            numero = -numero;
+        }
+
+        return numero;
+    }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -31,7 +50,7 @@ public class SomaDigitos {
             while (!isFim(entrada)) {
 
                 // Converte para número e trata negativos
-                int num = Integer.parseInt(entrada);
+                int num = converterParaInteiro(entrada);
                 if (num < 0) {
                     num = -num; // se o cara digitar negativo transforma pra positivo
                 }

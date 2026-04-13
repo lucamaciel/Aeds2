@@ -1,5 +1,26 @@
 #include <stdio.h>
-#include <string.h>
+
+int meu_strlen(char string[]) {
+    int tamanho = 0;
+    while (string[tamanho] != '\0') {
+        tamanho++;
+    }
+    return tamanho;
+}
+
+int isFim(char string[]) {
+    return (string[0] == 'F' && string[1] == 'I' && string[2] == 'M' && string[3] == '\0');
+}
+
+void remover_quebra_linha(char string[]) {
+    int i = 0;
+    while (string[i] != '\0') {
+        if (string[i] == '\n') {
+            string[i] = '\0';
+        }
+        i++;
+    }
+}
 
 int main() {
     char string[100];
@@ -9,12 +30,12 @@ int main() {
         return 0;
     }
     // Remove o caractere de nova linha '\n' que o fgets adiciona
-    string[strcspn(string, "\n")] = '\0';
+    remover_quebra_linha(string);
 
-    while (strcmp(string, "FIM") != 0) {
+    while (!isFim(string)) {
 			        
         // Calcula o tamanho da string atual
-        int n = strlen(string);
+        int n = meu_strlen(string);
 
         for (int i = n - 1; i >= 0; i--)//imprime ao contrario
         {
@@ -31,7 +52,7 @@ int main() {
             return 0;
         }
         
-        string[strcspn(string, "\n")] = '\0';
+        remover_quebra_linha(string);
     }
 
     return 0;

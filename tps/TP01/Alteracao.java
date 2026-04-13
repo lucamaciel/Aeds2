@@ -1,12 +1,16 @@
 import java.util.Scanner;
 
 public class Alteracao {
+    public static boolean isFim(String s) {
+        return s.length() == 3 && s.charAt(0) == 'F' && s.charAt(1) == 'I' && s.charAt(2) == 'M';
+    }
+
     public static void main(String args[]) {
         Scanner sc = new Scanner(System.in);
         int seed = 4;
 
         String s0 = sc.nextLine();
-        while (!s0.equals("FIM")) {
+        while (!isFim(s0)) {
             String resultado = "";
 
             // Sorteio das letras sem usar Random
