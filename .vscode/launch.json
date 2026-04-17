@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Ex_01",
+      "request": "launch",
+      "mainClass": "Ex_01",
+      "projectName": "Aeds2_6a9fca4f"
+    },
+    {
+      "type": "java",
       "name": "Bubble",
       "request": "launch",
       "mainClass": "Estudo.ProvaPratica01.Bubble",
