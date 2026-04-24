@@ -80,5 +80,8 @@ class Celula{
             //se o próximo elemento for maior que o elemento atual, ai ele retorna o próximo elemento, certinho agora
     }
     //EX05) Faça um metodo Iterativo para mostra ros elementos da pilha na ordem que foram inseridos
-    
+
+}
+
+
 }

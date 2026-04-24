@@ -47,7 +47,7 @@ class Data {
 // ============================================================
 // Tipo Hora
 // ============================================================
-class Hora { 
+class Hora {
     private int hora;
     private int minuto;
 
@@ -67,14 +67,14 @@ class Hora {
     // recebe "HH:mm", retorna objeto Hora
     public static Hora parseHora(String s) {
         String[] p = s.split(":");
-        return new Hora( 
-                Integer.parseInt(p[0]), 
+        return new Hora(
+                Integer.parseInt(p[0]),
                 Integer.parseInt(p[1]));
     }
 
     // retorna "HH:mm"
-    public String formatar() { 
-    
+    public String formatar() {
+
         return String.format("%02d:%02d", hora, minuto);
     }
 }
@@ -89,7 +89,7 @@ class Restaurante {
     private int capacidade;
     private double avaliacao;
     private String[] tipoCozinha;
-    private int faixaPreco; 
+    private int faixaPreco;
     private Hora horarioAbertura;
     private Hora horarioFechamento;
     private Data dataAbertura;
@@ -157,7 +157,6 @@ class Restaurante {
         r.tipoCozinha = c[5].trim().split(";");
         r.faixaPreco = c[6].trim().length(); // conta os '$': $=1, $$=2, etc.
 
-        
         String[] hor = c[7].trim().split("-");
         r.horarioAbertura = Hora.parseHora(hor[0]);
         r.horarioFechamento = Hora.parseHora(hor[1]);
@@ -256,9 +255,8 @@ class ColecaoRestaurantes {
     }
 }
 
-
-public class Main { 
-    public static void main(String[] args) { 
+public class ex01 {
+    public static void main(String[] args) {
         ColecaoRestaurantes colecao = ColecaoRestaurantes.lerCsv();
 
         Scanner sc = new Scanner(System.in);
