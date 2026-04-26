@@ -2,19 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-// --- Funções Auxiliares de String ---
 int my_len(const char *s) {
     int i = 0;
-    while (s && s[i] != '\0') i++;
+    while (s && s[i]) i++;
     return i;
-}
-
-void my_cat(char *dst, const char *src) {
-    int i = 0;
-    while (dst[i] != '\0') i++;
-    int j = 0;
-    while (src[j] != '\0') dst[i++] = src[j++];
-    dst[i] = '\0';
 }
 
 void my_zero(void *ptr, int n) {
@@ -23,15 +14,13 @@ void my_zero(void *ptr, int n) {
 }
 
 void str_dup(char **dst, const char *src) {
-    *dst = (char *)malloc(my_len(src) + 1);
-    int k = 0;
-    while (src[k] != '\0') { (*dst)[k] = src[k]; k++; }
-    (*dst)[k] = '\0';
+    int len = my_len(src);
+    *dst = (char *)malloc(len + 1);
+    for (int i = 0; i <= len; i++) (*dst)[i] = src[i];
 }
 
 void prox_campo(const char *src, int *pos, char delim, char *dst, int dst_sz) {
     int i = 0;
-    // Removido o pulo de espaços para manter a fidelidade ao CSV
     while (src[*pos] != '\0' && src[*pos] != delim) {
         if (i < dst_sz - 1) dst[i++] = src[(*pos)];
         (*pos)++;
@@ -40,166 +29,109 @@ void prox_campo(const char *src, int *pos, char delim, char *dst, int dst_sz) {
     if (src[*pos] == delim) (*pos)++;
 }
 
-// --- Tipos e Structs ---
 typedef struct { int ano, mes, dia; } Data;
 typedef struct { int hora, minuto; } Hora;
 
-#define MAX_TIPOS 10
-#define MAX_STR 256
-
 typedef struct {
-    int id;
-    char *nome, *cidade;
-    int capacidade;
+    int id, capacidade, n_tipos_cozinha, faixa_preco, aberto;
+    char *nome, *cidade, **tipos_cozinha;
     double avaliacao;
-    int n_tipos_cozinha;
-    char **tipos_cozinha;
-    int faixa_preco;
     Hora horario_abertura, horario_fechamento;
     Data data_abertura;
-    int aberto;
 } Restaurante;
 
-// --- Parsing ---
+Restaurante* mapa_id[20000];
+
 Restaurante *parse_restaurante(char *s) {
     Restaurante *r = (Restaurante *)malloc(sizeof(Restaurante));
     my_zero(r, sizeof(Restaurante));
     int pos = 0;
-    char tmp[MAX_STR * MAX_TIPOS];
+    char tmp[512];
 
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp)); sscanf(tmp, "%d", &r->id);
-    prox_campo(s, &pos, ',', tmp, MAX_STR); str_dup(&r->nome, tmp);
-    prox_campo(s, &pos, ',', tmp, MAX_STR); str_dup(&r->cidade, tmp);
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp)); sscanf(tmp, "%d", &r->capacidade);
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp)); sscanf(tmp, "%lf", &r->avaliacao);
+    prox_campo(s, &pos, ',', tmp, 512); r->id = atoi(tmp);
+    prox_campo(s, &pos, ',', tmp, 512); str_dup(&r->nome, tmp);
+    prox_campo(s, &pos, ',', tmp, 512); str_dup(&r->cidade, tmp);
+    prox_campo(s, &pos, ',', tmp, 512); r->capacidade = atoi(tmp);
+    prox_campo(s, &pos, ',', tmp, 512); r->avaliacao = atof(tmp);
 
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp));
-    int cnt = 1, ci = 0;
-    while (tmp[ci] != '\0') { if (tmp[ci] == ';') cnt++; ci++; }
-    r->tipos_cozinha = (char **)malloc(cnt * sizeof(char *));
-    int tpos = 0;
-    while (tmp[tpos] != '\0' && r->n_tipos_cozinha < MAX_TIPOS) {
-        char tbuf[MAX_STR];
-        prox_campo(tmp, &tpos, ';', tbuf, MAX_STR);
-        str_dup(&r->tipos_cozinha[r->n_tipos_cozinha++], tbuf);
+    prox_campo(s, &pos, ',', tmp, 512);
+    r->tipos_cozinha = (char **)malloc(10 * sizeof(char *));
+    int tpos = 0, n = 0;
+    while (tmp[tpos] != '\0') {
+        char tbuf[128];
+        int tp = 0;
+        while(tmp[tpos] != ';' && tmp[tpos] != '\0') tbuf[tp++] = tmp[tpos++];
+        tbuf[tp] = '\0';
+        str_dup(&r->tipos_cozinha[n++], tbuf);
+        if(tmp[tpos] == ';') tpos++;
     }
+    r->n_tipos_cozinha = n;
 
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp)); r->faixa_preco = my_len(tmp);
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp));
-    char hab[6], hfe[6]; int hi = 0, hj = 0;
-    while (tmp[hi] != '-' && tmp[hi] != '\0') hab[hj++] = tmp[hi++];
-    hab[hj] = '\0'; if (tmp[hi] == '-') hi++; hj = 0;
-    while (tmp[hi] != '\0') hfe[hj++] = tmp[hi++];
-    hfe[hj] = '\0';
-    sscanf(hab, "%d:%d", &r->horario_abertura.hora, &r->horario_abertura.minuto);
-    sscanf(hfe, "%d:%d", &r->horario_fechamento.hora, &r->horario_fechamento.minuto);
-
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp)); sscanf(tmp, "%d-%d-%d", &r->data_abertura.ano, &r->data_abertura.mes, &r->data_abertura.dia);
-    prox_campo(s, &pos, ',', tmp, sizeof(tmp)); r->aberto = (strcmp(tmp, "true") == 0);
+    prox_campo(s, &pos, ',', tmp, 512); r->faixa_preco = my_len(tmp);
+    prox_campo(s, &pos, ',', tmp, 512);
+    sscanf(tmp, "%d:%d-%d:%d", &r->horario_abertura.hora, &r->horario_abertura.minuto, 
+                               &r->horario_fechamento.hora, &r->horario_fechamento.minuto);
+    prox_campo(s, &pos, ',', tmp, 512);
+    sscanf(tmp, "%d-%d-%d", &r->data_abertura.ano, &r->data_abertura.mes, &r->data_abertura.dia);
+    prox_campo(s, &pos, ',', tmp, 512);
+    r->aberto = (tmp[0] == 't');
 
     return r;
 }
 
-void formatar_restaurante(Restaurante *r, char *buffer) {
-    char tipos[MAX_STR * MAX_TIPOS] = "[";
-    for (int i = 0; i < r->n_tipos_cozinha; i++) {
-        if (i > 0) my_cat(tipos, ", ");
-        my_cat(tipos, r->tipos_cozinha[i]);
-    }
-    my_cat(tipos, "]");
+int main() {
+    FILE *f = fopen("/tmp/restaurantes.csv", "r");
+    if (!f) return 1;
 
-    char fp[8] = "";
-    for (int i = 0; i < r->faixa_preco; i++) my_cat(fp, "$");
-
-    sprintf(buffer, "[%d ## %s ## %s ## %d ## %.1f ## %s ## %s ## %02d:%02d-%02d:%02d ## %02d/%02d/%04d ## %s]",
-            r->id, r->nome, r->cidade, r->capacidade, r->avaliacao, tipos, fp,
-            r->horario_abertura.hora, r->horario_abertura.minuto,
-            r->horario_fechamento.hora, r->horario_fechamento.minuto,
-            r->data_abertura.dia, r->data_abertura.mes, r->data_abertura.ano,
-            r->aberto ? "true" : "false");
-}
-
-// --- Coleção e Pilha ---
-typedef struct { int tamanho; Restaurante **restaurantes; } Colecao;
-typedef struct { int topo, capacidade; Restaurante **dados; } Pilha;
-
-Colecao *ler_csv(const char *path) {
-    FILE *f = fopen(path, "r");
-    if (!f) return NULL;
-    Colecao *col = malloc(sizeof(Colecao));
-    int cap = 100;
-    col->restaurantes = malloc(cap * sizeof(Restaurante *));
-    col->tamanho = 0;
     char linha[1024];
     fgets(linha, sizeof(linha), f);
     while (fgets(linha, sizeof(linha), f)) {
         int len = my_len(linha);
         while (len > 0 && (linha[len-1] == '\n' || linha[len-1] == '\r')) linha[--len] = '\0';
         if (len == 0) continue;
-        if (col->tamanho == cap) col->restaurantes = realloc(col->restaurantes, (cap *= 2) * sizeof(Restaurante *));
-        col->restaurantes[col->tamanho++] = parse_restaurante(linha);
+        Restaurante *r = parse_restaurante(linha);
+        mapa_id[r->id] = r;
     }
     fclose(f);
-    return col;
-}
 
-void pilha_criar(Pilha *p) {
-    p->capacidade = 100;
-    p->dados = malloc(p->capacidade * sizeof(Restaurante *));
-    p->topo = -1;
-}
+    Restaurante **pilha = malloc(2000 * sizeof(Restaurante *));
+    int topo = -1;
 
-void pilha_inserir(Pilha *p, Restaurante *r) {
-    if (p->topo == p->capacidade - 1) p->dados = realloc(p->dados, (p->capacidade *= 2) * sizeof(Restaurante *));
-    p->dados[++(p->topo)] = r;
-}
-
-Restaurante *pilha_remover(Pilha *p) {
-    return (p->topo == -1) ? NULL : p->dados[(p->topo)--];
-}
-
-// --- Main ---
-int main() {
-    Colecao *col = ler_csv("/tmp/restaurantes.csv");
-    if (!col) return 1;
-
-    Pilha p; pilha_criar(&p);
-    char entrada[MAX_STR];
-    
-    // 1. IDs iniciais até "FIM"
+    char entrada[100];
     while (scanf("%s", entrada) && strcmp(entrada, "FIM") != 0) {
         int id = atoi(entrada);
-        for (int i = 0; i < col->tamanho; i++) {
-            if (col->restaurantes[i]->id == id) {
-                pilha_inserir(&p, col->restaurantes[i]);
-                break;
-            }
-        }
+        if (mapa_id[id]) pilha[++topo] = mapa_id[id];
     }
 
-    // 2. Comandos dinâmicos
-    int n; scanf("%d", &n);
+    int n;
+    scanf("%d", &n);
     while (n--) {
-        char cmd[10]; scanf("%s", cmd);
+        char cmd[10];
+        scanf("%s", cmd);
         if (cmd[0] == 'I') {
-            int id; scanf("%d", &id);
-            for (int i = 0; i < col->tamanho; i++) {
-                if (col->restaurantes[i]->id == id) {
-                    pilha_inserir(&p, col->restaurantes[i]);
-                    break;
-                }
-            }
+            int id;
+            scanf("%d", &id);
+            if (mapa_id[id]) pilha[++topo] = mapa_id[id];
         } else if (cmd[0] == 'R') {
-            Restaurante *r = pilha_remover(&p);
-            if (r) printf("(R)%s\n", r->nome); // ERRO CORRIGIDO: Removido espaço
+            if (topo > -1) {
+                printf("(R)%s\n", pilha[topo--]->nome);
+            }
         }
     }
 
-    // 3. Exibição final: Topo ao fundo (sem índice)
-    for (int i = p.topo; i >= 0; i--) {
-        char buf[1024];
-        formatar_restaurante(p.dados[i], buf);
-        printf("%s\n", buf); // ERRO CORRIGIDO: Removido [i]
+    for (int i = topo; i >= 0; i--) {
+        Restaurante *r = pilha[i];
+        printf("[%d ## %s ## %s ## %d ## %.1f ## [", r->id, r->nome, r->cidade, r->capacidade, r->avaliacao);
+        for(int j=0; j<r->n_tipos_cozinha; j++) {
+            printf("%s%s", r->tipos_cozinha[j], j == r->n_tipos_cozinha - 1 ? "" : ", ");
+        }
+        printf("] ## ");
+        for(int j=0; j<r->faixa_preco; j++) printf("$");
+        printf(" ## %02d:%02d-%02d:%02d ## %02d/%02d/%04d ## %s]\n", 
+            r->horario_abertura.hora, r->horario_abertura.minuto,
+            r->horario_fechamento.hora, r->horario_fechamento.minuto,
+            r->data_abertura.dia, r->data_abertura.mes, r->data_abertura.ano,
+            r->aberto ? "true" : "false");
     }
 
     return 0;
