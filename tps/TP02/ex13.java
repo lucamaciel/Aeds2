@@ -49,8 +49,8 @@ class Restaurante {
     private double avaliacao;
     private String[] tipoCozinha;
     private int faixaPreco;
-    private Hora horarioAbertura, horarioFechamento;
-    private Data dataAbertura;
+    private Hora abertura, fechamento;
+    private Data data;
     private boolean aberto;
 
     private Restaurante() {
@@ -64,11 +64,11 @@ class Restaurante {
         return nome;
     }
 
-    public Data getDataAbertura() {
-        return dataAbertura;
+    public Data getData() {
+        return data;
     }
 
-    public static Restaurante parseRestaurante(String s) {
+    public static Restaurante parse(String s) {
         String[] c = s.split(",");
         Restaurante r = new Restaurante();
 
@@ -80,11 +80,11 @@ class Restaurante {
         r.tipoCozinha = c[5].trim().split(";");
         r.faixaPreco = c[6].trim().length();
 
-        String[] hor = c[7].trim().split("-");
-        r.horarioAbertura = Hora.parseHora(hor[0]);
-        r.horarioFechamento = Hora.parseHora(hor[1]);
+        String[] h = c[7].trim().split("-");
+        r.abertura = Hora.parseHora(h[0]);
+        r.fechamento = Hora.parseHora(h[1]);
 
-        r.dataAbertura = Data.parseData(c[8].trim());
+        r.data = Data.parseData(c[8].trim());
         r.aberto = Boolean.parseBoolean(c[9].trim());
 
         return r;
@@ -105,113 +105,107 @@ class Restaurante {
 
         return String.format("[%d ## %s ## %s ## %d ## %.1f ## %s ## %s ## %s-%s ## %s ## %b]",
                 id, nome, cidade, capacidade, avaliacao, t, fp,
-                horarioAbertura.formatar(), horarioFechamento.formatar(),
-                dataAbertura.formatar(), aberto);
+                abertura.formatar(), fechamento.formatar(),
+                data.formatar(), aberto);
     }
 }
 
-class ColecaoRestaurantes {
-    private int tamanho;
-    private Restaurante[] restaurantes;
+class Colecao {
+    private Restaurante[] arr;
+    private int n;
 
-    public ColecaoRestaurantes() {
-        restaurantes = new Restaurante[100];
-        tamanho = 0;
+    public Colecao() {
+        arr = new Restaurante[100];
+        n = 0;
     }
 
-    public void lerCsv(String path) {
+    public void ler(String path) {
         try {
             Scanner sc = new Scanner(new File(path));
-            sc.nextLine(); // pula cabeçalho
+            sc.nextLine();
 
             while (sc.hasNextLine()) {
                 String l = sc.nextLine().trim();
                 if (l.isEmpty())
                     continue;
 
-                if (tamanho == restaurantes.length) {
-                    Restaurante[] novo = new Restaurante[restaurantes.length * 2];
-                    for (int i = 0; i < tamanho; i++)
-                        novo[i] = restaurantes[i];
-                    restaurantes = novo;
+                if (n == arr.length) {
+                    Restaurante[] novo = new Restaurante[arr.length * 2];
+                    for (int i = 0; i < n; i++)
+                        novo[i] = arr[i];
+                    arr = novo;
                 }
 
-                restaurantes[tamanho++] = Restaurante.parseRestaurante(l);
+                arr[n++] = Restaurante.parse(l);
             }
+
             sc.close();
         } catch (Exception e) {
-            System.err.println("Erro ao ler CSV");
+            System.err.println("Erro CSV");
         }
     }
 
-    public static ColecaoRestaurantes lerCsv() {
-        ColecaoRestaurantes c = new ColecaoRestaurantes();
-        c.lerCsv("/tmp/restaurantes.csv");
+    public static Colecao carregar() {
+        Colecao c = new Colecao();
+        c.ler("/tmp/restaurantes.csv");
         return c;
     }
 
-    public Restaurante buscarPorId(int id) {
-        for (int i = 0; i < tamanho; i++) {
-            if (restaurantes[i].getId() == id)
-                return restaurantes[i];
-        }
+    public Restaurante buscar(int id) {
+        for (int i = 0; i < n; i++)
+            if (arr[i].getId() == id)
+                return arr[i];
         return null;
     }
 }
 
-// Fila Circular tamanho 5
-class FilaCircular {
-    private static final int TAM = 5;
-    private Restaurante[] array;
-    private int inicio, fim, qtd;
+class Fila {
+    private Restaurante[] f;
+    private int ini, fim, qtd;
 
-    public FilaCircular() {
-        array = new Restaurante[TAM];
-        inicio = fim = qtd = 0;
+    public Fila() {
+        f = new Restaurante[5];
+        ini = fim = qtd = 0;
     }
 
-    public Restaurante enfileirar(Restaurante r) {
-        Restaurante removido = null;
+    public Restaurante inserir(Restaurante r) {
+        Restaurante rem = null;
 
-        if (qtd == TAM) {
-            removido = desenfileirar();
-        }
+        if (qtd == 5)
+            rem = remover();
 
-        array[fim] = r;
-        fim = (fim + 1) % TAM;
+        f[fim] = r;
+        fim = (fim + 1) % 5;
         qtd++;
 
-        return removido;
+        return rem;
     }
 
-    public Restaurante desenfileirar() {
+    public Restaurante remover() {
         if (qtd == 0)
             return null;
 
-        Restaurante r = array[inicio];
-        inicio = (inicio + 1) % TAM;
+        Restaurante r = f[ini];
+        ini = (ini + 1) % 5;
         qtd--;
 
         return r;
     }
 
-    public int mediaAno() {
-        if (qtd == 0)
-            return 0;
-
+    public int media() {
         int soma = 0;
-        int i = inicio;
+        int i = ini;
 
         for (int j = 0; j < qtd; j++) {
-            soma += array[i].getDataAbertura().getAno();
-            i = (i + 1) % TAM;
+            soma += f[i].getData().getAno();
+            i = (i + 1) % 5;
         }
 
         return (int) Math.round((double) soma / qtd);
     }
 
     public Restaurante get(int i) {
-        return array[(inicio + i) % TAM];
+        return f[(ini + i) % 5];
     }
 
     public int tamanho() {
@@ -222,23 +216,24 @@ class FilaCircular {
 public class ex13 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        ColecaoRestaurantes base = ColecaoRestaurantes.lerCsv();
-        FilaCircular fila = new FilaCircular();
+        Colecao base = Colecao.carregar();
+        Fila fila = new Fila();
 
-        // Entrada inicial
+        // inicial
         while (true) {
             int id = sc.nextInt();
             if (id == -1)
                 break;
 
-            Restaurante r = base.buscarPorId(id);
+            Restaurante r = base.buscar(id);
+
             if (r != null) {
-                Restaurante removido = fila.enfileirar(r);
+                Restaurante rem = fila.inserir(r);
 
-                if (removido != null)
-                    System.out.println("(R) " + removido.getNome());
+                if (rem != null)
+                    System.out.println("(R)" + rem.getNome());
 
-                System.out.println("(I) " + fila.mediaAno());
+                System.out.println("(I)" + fila.media());
             }
         }
 
@@ -250,25 +245,26 @@ public class ex13 {
             String[] cmd = sc.nextLine().split("\\s+");
 
             if (cmd[0].equals("I")) {
-                Restaurante r = base.buscarPorId(Integer.parseInt(cmd[1]));
+                Restaurante r = base.buscar(Integer.parseInt(cmd[1]));
 
                 if (r != null) {
-                    Restaurante removido = fila.enfileirar(r);
+                    Restaurante rem = fila.inserir(r);
 
-                    if (removido != null)
-                        System.out.println("(R) " + removido.getNome());
+                    if (rem != null)
+                        System.out.println("(R)" + rem.getNome());
 
-                    System.out.println("(I) " + fila.mediaAno());
+                    System.out.println("(I)" + fila.media());
                 }
 
             } else {
-                Restaurante r = fila.desenfileirar();
+                Restaurante r = fila.remover();
+
                 if (r != null)
-                    System.out.println("(R) " + r.getNome());
+                    System.out.println("(R)" + r.getNome());
             }
         }
 
-        // saída final
+        // final
         for (int i = 0; i < fila.tamanho(); i++) {
             System.out.println(fila.get(i).formatar());
         }
