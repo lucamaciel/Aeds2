@@ -1,13 +1,23 @@
+
+// Bloco base de tipos — igual ao exercicio 1 (Java), copiado em cada exercicio
+// imports permitidos pelo enunciado: Scanner, String.format, compareTo
 import java.util.Scanner;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
+// ============================================================
+// Tipo Data
+// ============================================================
 class Data {
-    private int dia, mes, ano;
+    private int dia;
+    private int mes;
+    private int ano;
 
-    public Data(int d, int m, int a) {
-        dia = d;
-        mes = m;
-        ano = a;
+    public Data(int dia, int mes, int ano) {
+        this.dia = dia;
+        this.mes = mes;
+        this.ano = ano;
     }
 
     public int getDia() {
@@ -22,22 +32,28 @@ class Data {
         return ano;
     }
 
+    // recebe "YYYY-MM-DD", retorna objeto Data
     public static Data parseData(String s) {
         String[] p = s.split("-");
         return new Data(Integer.parseInt(p[2]), Integer.parseInt(p[1]), Integer.parseInt(p[0]));
     }
 
+    // retorna "DD/MM/YYYY"
     public String formatar() {
         return String.format("%02d/%02d/%04d", dia, mes, ano);
     }
 }
 
+// ============================================================
+// Tipo Hora
+// ============================================================
 class Hora {
-    private int hora, minuto;
+    private int hora;
+    private int minuto;
 
-    private Hora(int h, int m) {
-        hora = h;
-        minuto = m;
+    private Hora(int hora, int minuto) {
+        this.hora = hora;
+        this.minuto = minuto;
     }
 
     public int getHora() {
@@ -48,24 +64,31 @@ class Hora {
         return minuto;
     }
 
+    // recebe "HH:mm", retorna objeto Hora
     public static Hora parseHora(String s) {
         String[] p = s.split(":");
         return new Hora(Integer.parseInt(p[0]), Integer.parseInt(p[1]));
     }
 
+    // retorna "HH:mm"
     public String formatar() {
         return String.format("%02d:%02d", hora, minuto);
     }
 }
 
+// ============================================================
+// Tipo Restaurante
+// ============================================================
 class Restaurante {
     private int id;
-    private String nome, cidade;
+    private String nome;
+    private String cidade;
     private int capacidade;
     private double avaliacao;
     private String[] tipoCozinha;
     private int faixaPreco;
-    private Hora horarioAbertura, horarioFechamento;
+    private Hora horarioAbertura;
+    private Hora horarioFechamento;
     private Data dataAbertura;
     private boolean aberto;
 
@@ -116,6 +139,7 @@ class Restaurante {
         return aberto;
     }
 
+    // recebe linha CSV, retorna objeto Restaurante
     public static Restaurante parseRestaurante(String s) {
         String[] c = s.split(",");
         Restaurante r = new Restaurante();
@@ -134,23 +158,31 @@ class Restaurante {
         return r;
     }
 
+    // retorna string no formato do enunciado
     public String formatar() {
-        StringBuilder t = new StringBuilder("[");
+        StringBuilder tipos = new StringBuilder("[");
         for (int i = 0; i < tipoCozinha.length; i++) {
             if (i > 0)
-                t.append(",");
-            t.append(tipoCozinha[i]);
+                tipos.append(",");
+            tipos.append(tipoCozinha[i]);
         }
-        t.append("]");
+        tipos.append("]");
+
         String fp = "";
         for (int i = 0; i < faixaPreco; i++)
             fp += "$";
+
         return String.format("[%d ## %s ## %s ## %d ## %.1f ## %s ## %s ## %s-%s ## %s ## %b]",
-                id, nome, cidade, capacidade, avaliacao, t, fp, horarioAbertura.formatar(),
-                horarioFechamento.formatar(), dataAbertura.formatar(), aberto);
+                id, nome, cidade, capacidade, avaliacao,
+                tipos, fp,
+                horarioAbertura.formatar(), horarioFechamento.formatar(),
+                dataAbertura.formatar(), aberto);
     }
 }
 
+// ============================================================
+// ColecaoRestaurantes
+// ============================================================
 class ColecaoRestaurantes {
     private int tamanho;
     private Restaurante[] restaurantes;
@@ -172,25 +204,26 @@ class ColecaoRestaurantes {
         Scanner sc = null;
         try {
             sc = new Scanner(new File(path));
-            boolean cab = true;
+            boolean cabecalho = true;
             while (sc.hasNextLine()) {
-                String l = sc.nextLine().trim();
-                if (cab) {
-                    cab = false;
+                String linha = sc.nextLine().trim();
+                if (cabecalho) {
+                    cabecalho = false;
                     continue;
                 }
-                if (l.isEmpty())
+                if (linha.isEmpty())
                     continue;
+                // expande o array se necessario
                 if (tamanho == restaurantes.length) {
-                    Restaurante[] n = new Restaurante[restaurantes.length * 2];
+                    Restaurante[] novo = new Restaurante[restaurantes.length * 2];
                     for (int i = 0; i < tamanho; i++)
-                        n[i] = restaurantes[i];
-                    restaurantes = n;
+                        novo[i] = restaurantes[i];
+                    restaurantes = novo;
                 }
-                restaurantes[tamanho++] = Restaurante.parseRestaurante(l);
+                restaurantes[tamanho++] = Restaurante.parseRestaurante(linha);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Nao encontrado: " + path);
+            System.err.println("Arquivo nao encontrado: " + path);
         } finally {
             if (sc != null)
                 sc.close();
@@ -213,6 +246,7 @@ class ColecaoRestaurantes {
 
 // ============================================================
 // Lista com Alocacao Sequencial de Restaurantes
+// baseada na lista de inteiros vista em aula, adaptada para Restaurante
 // ============================================================
 class Lista {
     private int tamanho;
@@ -229,6 +263,7 @@ class Lista {
         return tamanho;
     }
 
+    // expande o array interno se necessario
     private void crescer() {
         if (tamanho < capacidade)
             return;
@@ -239,6 +274,7 @@ class Lista {
         elementos = novo;
     }
 
+    // insere na primeira posicao, remaneja os demais
     public void inserirInicio(Restaurante r) {
         crescer();
         for (int i = tamanho; i > 0; i--)
@@ -247,6 +283,7 @@ class Lista {
         tamanho++;
     }
 
+    // insere na posicao informada (posicao < n), remaneja os demais
     public void inserir(Restaurante r, int posicao) {
         crescer();
         for (int i = tamanho; i > posicao; i--)
@@ -255,11 +292,13 @@ class Lista {
         tamanho++;
     }
 
+    // insere na ultima posicao
     public void inserirFim(Restaurante r) {
         crescer();
         elementos[tamanho++] = r;
     }
 
+    // remove e retorna o primeiro, remaneja os demais
     public Restaurante removerInicio() {
         if (tamanho == 0)
             return null;
@@ -270,6 +309,7 @@ class Lista {
         return r;
     }
 
+    // remove e retorna o elemento na posicao informada, remaneja os demais
     public Restaurante remover(int posicao) {
         if (posicao < 0 || posicao >= tamanho)
             return null;
@@ -280,6 +320,7 @@ class Lista {
         return r;
     }
 
+    // remove e retorna o ultimo
     public Restaurante removerFim() {
         if (tamanho == 0)
             return null;
@@ -293,12 +334,15 @@ class Lista {
     }
 }
 
+// ============================================================
+// Main — Exercicio 11: Lista com Alocacao Sequencial
+// ============================================================
 public class ex11 {
     public static void main(String[] args) {
         ColecaoRestaurantes colecao = ColecaoRestaurantes.lerCsv();
         Scanner sc = new Scanner(System.in);
 
-        // --- Parte 1: ids -> insere ao fim da lista ---
+        // --- Parte 1: ids ate -1 — insere ao fim da lista ---
         Lista lista = new Lista(100);
         while (sc.hasNextInt()) {
             int id = sc.nextInt();
@@ -309,55 +353,59 @@ public class ex11 {
                 lista.inserirFim(r);
         }
         if (sc.hasNextLine())
-            sc.nextLine(); // consume \n apos -1
+            sc.nextLine(); // consome \n apos -1
 
-        // --- Parte 2: n comandos ---
+        // --- Parte 2: n comandos de insercao/remocao ---
         int n = Integer.parseInt(sc.nextLine().trim());
-        StringBuilder saida = new StringBuilder();
-
         for (int c = 0; c < n; c++) {
             String linha = sc.nextLine().trim();
             String[] partes = linha.split(" ");
             String cmd = partes[0];
 
-            if (cmd.equals("II")) {
+            if (cmd.compareTo("II") == 0) {
+                // inserir no inicio
                 int id = Integer.parseInt(partes[1]);
                 Restaurante r = colecao.buscarPorId(id);
                 if (r != null)
                     lista.inserirInicio(r);
 
-            } else if (cmd.equals("I*")) {
+            } else if (cmd.compareTo("I*") == 0) {
+                // inserir na posicao informada
                 int pos = Integer.parseInt(partes[1]);
                 int id = Integer.parseInt(partes[2]);
                 Restaurante r = colecao.buscarPorId(id);
                 if (r != null)
                     lista.inserir(r, pos);
 
-            } else if (cmd.equals("IF")) {
+            } else if (cmd.compareTo("IF") == 0) {
+                // inserir no fim
                 int id = Integer.parseInt(partes[1]);
                 Restaurante r = colecao.buscarPorId(id);
                 if (r != null)
                     lista.inserirFim(r);
 
-            } else if (cmd.equals("RI")) {
+            } else if (cmd.compareTo("RI") == 0) {
+                // remover do inicio
                 Restaurante r = lista.removerInicio();
                 if (r != null)
-                    saida.append("(R) ").append(r.getNome()).append("\n");
+                    System.out.println("(R)" + r.getNome());
 
-            } else if (cmd.equals("R*")) {
+            } else if (cmd.compareTo("R*") == 0) {
+                // remover da posicao informada
                 int pos = Integer.parseInt(partes[1]);
                 Restaurante r = lista.remover(pos);
                 if (r != null)
-                    saida.append("(R) ").append(r.getNome()).append("\n");
+                    System.out.println("(R)" + r.getNome());
 
-            } else if (cmd.equals("RF")) {
+            } else if (cmd.compareTo("RF") == 0) {
+                // remover do fim
                 Restaurante r = lista.removerFim();
                 if (r != null)
-                    saida.append("(R) ").append(r.getNome()).append("\n");
+                    System.out.println("(R)" + r.getNome());
             }
         }
 
-        System.out.print(saida);
+        // exibe todos os registros da lista do primeiro ao ultimo
         for (int i = 0; i < lista.getTamanho(); i++)
             System.out.println(lista.get(i).formatar());
 
