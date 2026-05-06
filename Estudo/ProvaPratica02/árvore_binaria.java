@@ -49,6 +49,10 @@ public class árvore_binaria {
          // se o valor a ser inserido for igual ao valor da raiz, lança uma exceção indicando que o 
          // valor já existe na árvore
     }
+    boolean Pesquisar(int x){    
+        //função para pesquisar que recebe o valor a ser pesquisado como parametro
+        return Pesquisar(x, raiz); // chama o método recursivo para pesquisar na árvore
+    }
 
 Class No {
         int valor; // valor armazenado no nó
@@ -96,5 +100,80 @@ Class No {
             else{throw new Exception("Valor já existe na árvore");}
             // se o valor a ser inserido for igual ao valor do nó pai, lança uma
     }
+        
+        boolean pesquisar ( int x, No i){
+            boolean resp;
+
+            if (atual == null){
+                resp = false;
+        }else if (x == i.elemento){
+            resp = true;
+        }else if(x < i.elemento){
+            pesquisar(x, i.esq);
+        }else if ( x > i.elemento){
+            pesquisar(x,i.dir);
+        }
+        return resp;
+    }
+        
+        void caminharCentral(No i){
+            if(i != null){
+                caminharCentral(i.esq);
+                System.out.print(i.elemento + "");
+                caminharCenral(i.dir);
+            }
+        }
+        
+        void caminharPos(No i){
+            if( i != null){
+                caminharPos(i.esq);
+                caminharPos(i.dir);
+                System.out.print(i.elemento + "");
+
+            }
+        }
+        
+        void caminharPre(No i) {
+            if (i != null) {
+                System.out.print(i.elemento + "");
+                caminharPos(i.esq);
+                caminharPos(i.dir);
+            }
+        }
+    //faça um metodo que retorne a altura da arvore
+
+    public int Altura(int i, int altura){
+        if ( i == null){
+            altura --;
+        }else{
+            int AlturaEsq = getAltura(i.esq,altura+1);
+            int AlturaDir = getAltura(i.dir,altura+1);
+            altura = (alturaEsq > alturaDir) ? alturaEsq : alturaDir; 
+            //o operador ? é um operador ternário que funciona como um if-else, ele verifica 
+            // se a altura da subárvore esquerda é maior do que a altura da subárvore direita,
+            //  se for verdade ele retorna a altura da subárvore esquerda, caso contrário ele 
+            // retorna a altura da subárvore direita
+
+        }
+        return altura;
+    }
+ 
+    // Insira 100000 elementos de forma aleatória. Para cada inserção, mostre na
+ // tela o número de elementos da árvore, o logaritmo (base 2) desse número e a
+ // altura da árvore 
+    void inserir1000(No i){
+        for (int j = 0; j < 100000; j++){
+            int x = (int) (Math.random() * 100000); // gera um número aleatório entre 0 e 100000
+            inserir(x); // insere o número aleatório na árvore
+            int numeroElementos = j + 1; 
+            // número de elementos na árvore é igual ao número de iterações + 1
+            double logaritmo = Math.log(numeroElementos) / Math.log(2); 
+            // calcula o logaritmo base 2 do número de elementos
+            int altura = Altura(i, 0); 
+            // calcula a altura da árvore
+            System.out.println("Número de elementos: " + numeroElementos + ", Logaritmo (base 2): " + logaritmo + ", Altura da árvore: " + altura);
+        }
+    }
+    
 }
 }
