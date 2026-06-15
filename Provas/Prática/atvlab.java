@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 class No {
 
     // false = branco | true = preto
@@ -268,15 +270,22 @@ public class atvlab {
 
         try {
 
+            Scanner sc = new Scanner(System.in);
             atvlab arvore = new atvlab();
 
-            int[] valores = { 4, 35, 10, 13, 3, 30, 15, 12, 7, 40, 20 };
+            System.out.print("Quantidade de numeros: ");
+            int quantidade = sc.nextInt();
 
-            for (int valor : valores) {
+            for (int i = 0; i < quantidade; i++) {
+                System.out.print("Digite o numero " + (i + 1) + ": ");
+                int valor = sc.nextInt();
                 arvore.inserir(valor);
             }
 
+            System.out.println("Arvore em ordem:");
             arvore.caminharCentral();
+
+            sc.close();
 
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
