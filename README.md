@@ -61,3 +61,11 @@ Documenta exercícios, implementações e conceitos ao longo do semestre, servin
 ---
 
 _Desenvolvido com foco em qualidade, clareza e praticidade._ 🚀
+
+## ✅ Status da Disciplina
+
+- Disciplina: Concluída (semestre anterior)
+- Nota final: 70/100
+- Módulos: Todos marcados como concluídos
+
+Para detalhes e tracker de estudos, ver `PlanoDeEnsino.md` e `Conclusao_AEDS2.md`.

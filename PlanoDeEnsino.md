@@ -59,7 +59,7 @@ Exemplo: 4.5 pts de quizzes → FQ = 1 + 0.3 × 0.75 = 1.225
 DESEMPENHO = [(P_MAIOR + P_SEGUNDA) / 40] × [Trabalhos / 20] × FQ × 15
 ```
 
-**Nota Final Estimada:** `[ ]` / 100
+**Nota Final Estimada:** `[70]` / 100
 
 ---
 
@@ -74,35 +74,35 @@ DESEMPENHO = [(P_MAIOR + P_SEGUNDA) / 40] × [Trabalhos / 20] × FQ × 15
   - [X] Complexidade e Notações O, Ω, Θ
   - [Revisar] Contagem de Operações e Somatórios
 
-- [ ] **Unidade II: Estruturas de Dados Lineares**
-  - [ ] Pilha, Fila Circular e Listas
+- [X] **Unidade II: Estruturas de Dados Lineares**
+  - [X] Pilha, Fila Circular e Listas
 
-- [ ] **Unidade III: Ordenação em Memória Principal**
-  - [ ] Pesquisa Sequencial e Binária
-  - [ ] Métodos Básicos: Seleção, Bolha, Inserção
-  - [ ] Métodos Avançados: Shellsort, Quicksort, Heapsort, Mergesort, Countingsort, Radixsort
-  - [ ] Análise Comparativa
+- [X] **Unidade III: Ordenação em Memória Principal**
+  - [X] Pesquisa Sequencial e Binária
+  - [X] Métodos Básicos: Seleção, Bolha, Inserção
+  - [X] Métodos Avançados: Shellsort, Quicksort, Heapsort, Mergesort, Countingsort, Radixsort
+  - [X] Análise Comparativa
 
-- [ ] **Unidade IV: Estruturas Dinâmicas Flexíveis**
-  - [ ] Implementações Dinâmicas em C e Java
-  - [ ] Matrizes e Coleta de Lixo
-  - [ ] TADs Nativos
+- [X] **Unidade IV: Estruturas Dinâmicas Flexíveis**
+  - [X] Implementações Dinâmicas em C e Java
+  - [X] Matrizes e Coleta de Lixo
+  - [X] TADs Nativos
 
-- [ ] **Unidade V: Árvores Binárias**
-  - [ ] Conceitos e Operações Básicas
-  - [ ] Pesquisa, Remoção e Caminhamento
-  - [ ] Inserções Avançadas
+- [X] **Unidade V: Árvores Binárias**
+  - [X] Conceitos e Operações Básicas
+  - [X] Pesquisa, Remoção e Caminhamento
+  - [X] Inserções Avançadas
 
-- [ ] **Unidade VI: Balanceamento de Árvores**
-  - [ ] Tipos de Rotação
-  - [ ] AVL, 2-3-4 e Red-Black Trees
+- [X] **Unidade VI: Balanceamento de Árvores**
+  - [X] Tipos de Rotação
+  - [X] AVL, 2-3-4 e Red-Black Trees
 
-- [ ] **Unidade VII: Tabelas Hash e Dicionários**
-  - [ ] Tabela Hash Direta e Indireta
-  - [ ] Dicionários, Conjuntos e Mapas
+- [X] **Unidade VII: Tabelas Hash e Dicionários**
+  - [X] Tabela Hash Direta e Indireta
+  - [X] Dicionários, Conjuntos e Mapas
 
-- [ ] **Unidade VIII: Árvores TRIE**
-  - [ ] TRIE Padrão e PATRICIA
+- [X] **Unidade VIII: Árvores TRIE**
+  - [X] TRIE Padrão e PATRICIA
 
 ---
 
